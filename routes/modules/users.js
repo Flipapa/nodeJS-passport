@@ -16,26 +16,26 @@ router.get('/register', (req, res) => {
 router.post('/register', async (req, res) => {
   const { name, email, password, password2 } = req.body
   const regiUser = await User.findOne({ email: email })
-  let errors = []
+  let regiErrors = []
   // check required fields
   if (!name || !email || !password || !password2) {
-    errors.push({ msg: 'Please fill in all fields' })
+    regiErrors.push({ msg: 'Please fill in all fields' })
   }
   // check password matches
   if (password !== password2) {
-    errors.push({ msg: 'Passwords do not match' })
+    regiErrors.push({ msg: 'Passwords do not match' })
   }
   // check password length
   if (password.length < 6) {
-    errors.push({ msg: 'Password should be at least 6 characters'})
+    regiErrors.push({ msg: 'Password should be at least 6 characters'})
   }
   // check existed user
   if (regiUser) {
-    errors.push({ msg: 'Email is already registered' })
+    regiErrors.push({ msg: 'Email is already registered' })
   }
 
-  if (errors.length > 0) {
-    res.render('register', { errors, name, email, password, password2})
+  if (regiErrors.length > 0) {
+    res.render('register', { regiErrors, name, email, password, password2})
   } else {
     const newUser = new User({ name, email, password })
     // hash password
@@ -46,7 +46,9 @@ router.post('/register', async (req, res) => {
         newUser.password = hash
         // save user
         newUser.save()
-          .then(res.redirect('/users/login'))
+          .then(user => {
+            req.flash('successMsg', 'You are now registered and can log in')
+            res.redirect('/users/login')})
           .catch(error => console.log(error))
       })
     })
