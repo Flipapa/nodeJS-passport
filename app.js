@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use(session({
   secret: 'nysmnyd777',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { maxAge: 600000 }
 }))
 app.use(passport.initialize())
 app.use(passport.session())
