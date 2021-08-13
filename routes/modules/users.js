@@ -3,16 +3,17 @@ const bcrypt = require('bcrypt')
 const passport = require('passport')
 const router = express.Router()
 const User = require('../../models/User')
+const { notLoggedIn } = require('../../config/auth')
 
 // Login Page
-router.get('/login', (req, res) => {
+router.get('/login', notLoggedIn, (req, res) => {
   res.render('login')
 })
 
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/users/login',
-    failureFlash: true
+  successRedirect: '/dashboard',
+  failureRedirect: '/users/login',
+  failureFlash: true
 }))
 
 // Logout
@@ -23,7 +24,7 @@ router.get('/logout', (req, res) => {
 })
 
 // Register Page
-router.get('/register', (req, res) => {
+router.get('/register', notLoggedIn, (req, res) => {
   res.render('register')
 })
 
@@ -41,7 +42,7 @@ router.post('/register', async (req, res) => {
   }
   // check password length
   if (password.length < 6) {
-    regiErrors.push({ msg: 'Password should be at least 6 characters'})
+    regiErrors.push({ msg: 'Password should be at least 6 characters' })
   }
   // check existed user
   if (regiUser) {
@@ -49,7 +50,7 @@ router.post('/register', async (req, res) => {
   }
 
   if (regiErrors.length > 0) {
-    res.render('register', { regiErrors, name, email, password, password2})
+    res.render('register', { regiErrors, name, email, password, password2 })
   } else {
     const newUser = new User({ name, email, password })
     // hash password
@@ -62,7 +63,8 @@ router.post('/register', async (req, res) => {
         newUser.save()
           .then(user => {
             req.flash('successMsg', 'You are now registered and can log in')
-            res.redirect('/users/login')})
+            res.redirect('/users/login')
+          })
           .catch(error => console.log(error))
       })
     })

@@ -1,4 +1,4 @@
-function isLoggedIn (req, res, next) {
+function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next()
   }
@@ -6,4 +6,11 @@ function isLoggedIn (req, res, next) {
   res.redirect('/users/login')
 }
 
-module.exports = { isLoggedIn }
+function notLoggedIn(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return next()
+  }
+  res.redirect('/dashboard')
+}
+
+module.exports = { isLoggedIn, notLoggedIn }

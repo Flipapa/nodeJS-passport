@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const { isLoggedIn } = require('../../config/auth')
+const { isLoggedIn, notLoggedIn } = require('../../config/auth')
 
 // Welcome Page
-router.get('/', (req, res) => {
+router.get('/', notLoggedIn, (req, res) => {
   res.render('home')
 })
 // Dashboard
