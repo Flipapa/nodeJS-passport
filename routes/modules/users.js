@@ -15,6 +15,13 @@ router.post('/login', passport.authenticate('local', {
     failureFlash: true
 }))
 
+// Logout
+router.get('/logout', (req, res) => {
+  req.logout()
+  req.flash('successMsg', 'You are logged out')
+  res.redirect('/users/login')
+})
+
 // Register Page
 router.get('/register', (req, res) => {
   res.render('register')
